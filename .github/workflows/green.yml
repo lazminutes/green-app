@@ -1,0 +1,52 @@
+name: Green app
+
+on:
+
+  push:
+    branches:
+      - main
+
+  schedule:
+  - cron: "59 * * * *"
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+         persist-credentials: false
+         fetch-depth: 0
+
+      - name: Modify last update
+        run: |
+          d=`date '+%Y-%m-%dT%H:%M:%SZ'`
+          echo $d > LAST_UPDATED
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "lazminutes@gmail.com"
+          git config --local user.name "lazminutes"
+          git add -A
+
+          arr[0]="fix: 😂 this is will be the laz"
+          arr[1]="fix: 😱 this is will be the laz"
+          arr[2]="fix: 👿 this is will be the laz"
+          arr[3]="fix: 🚀 this is will be the laz"
+          arr[4]="fix: 🙏 this is will be the laz"
+          arr[5]="fix: 🙈 this is will be the laz"
+          arr[6]="fix: 🐐 this is will be the laz"
+          arr[7]="fix: 🤖 this is will be the laz"
+          arr[8]="fix: 🟩 this is will be the laz"
+          arr[9]="fix: 👻 this is will be the laz"
+
+          rand=$[$RANDOM % ${#arr[@]}]
+
+          git commit -m "${arr[$rand]}"
+
+      - name: GitHub Push
+        uses: ad-m/github-push-action@v0.5.0
+        with:
+          force: true
+          directory: "."
+          github_token: ${{ secrets.GITHUB_TOKEN }}
